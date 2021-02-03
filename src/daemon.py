@@ -1,6 +1,9 @@
-from mailmod import GetEmailBodies
+from mailmod import GetOneEmailBody
 from body_parser import FindMapShare, ParseAndTriage
 
-messages = GetEmailBodies()
-for m in messages:
-    share = ParseAndTriage(m)
+while True:
+    message = GetOneEmailBody()
+    if message == "":
+        break
+    for body in message:
+        ParseAndTriage(body)
