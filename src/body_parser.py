@@ -2,6 +2,7 @@ import re
 from mailmod import SendMail
 import requests
 import json
+import urllib
 
 # Got these value pairs from https://api.avalanche.org/v2/public/products/map-layer
 # Note to self, I know the order makes no sense, but who cares?
@@ -16,10 +17,10 @@ def ComposePOST(url, message):
 
     mIdLine = re.findall("id=\"MessageId\".*value=.*\"", response)[0]
     messageId = re.findall("[0-9]+", mIdLine)[0]
-    message = message.replace(" ", "+")
-    message = message.replace("\n", "%0A")
+    message = urllib.parse.quote_plus(message)
     postMsg = "ReplyAddress=nwac%40anxiousmountaineer.com&ReplyMessage=" + \
         message+"&MessageId="+messageId+"&Guid="+guid
+    # data = json.dumps({"ReplyAddress":"nwac@anxiousmountaineer.com", "ReplyMessage": message, "MessageId" : messageId, "Guid" : guid})
     return postMsg
 
 
@@ -98,6 +99,5 @@ def ParseAndTriage(body):
         msg = GetForecastMessage(lineSplit[0])
         post = ComposePOST(url, msg)
         print("==========\n"+post+"\n==========")
-        response = requests.post("https://us0.explore.garmin.com/TextMessage/TxtMsg", msg)
-        print (response)
-
+        response = requests.post("https://us0.explore.garmin.com/TextMessage/TxtMsg", data=post, headers={"Accept":"*/*", "Content-Type":"application/x-www-form-urlencoded; charset=UTF-8", "Origin" : "https://us0.explore.garmin.com", "Referer":url, "X-Requested-With" : "XMLHttpRequest"})
+        print (response.text)
