@@ -7,4 +7,4 @@ Needs Python's requests
 python -m pip install requests
 
 Configure:
-Change the hostname,username,password values in body_parser.py
+Change the hostname,username,password values in mailmod.py
