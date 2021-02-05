@@ -73,7 +73,7 @@ def GetForecastMessage(id):
     return text
 
 
-def ParseAndTriage(body):
+def ParseAndTriage(body, From):
     firstLine = body.partition('\n')[0]
     lineSplitR = firstLine.split(' ')
     lineSplit = []
@@ -95,8 +95,11 @@ def ParseAndTriage(body):
 
     # If this is malformed, there's nothing to be done
     elif lineSplit[0].isnumeric() is True and lineSplit[0] in mapIdToCenter:
-        url = FindMapShare(body)
         msg = GetForecastMessage(lineSplit[0])
+        SendMail(msg, From)
+        url = FindMapShare(body)
+        if url == "":
+            return
         post = ComposePOST(url, msg)
         print("==========\n"+post+"\n==========")
         response = requests.post("https://us0.explore.garmin.com/TextMessage/TxtMsg", data=post, headers={"Accept":"*/*", "Content-Type":"application/x-www-form-urlencoded; charset=UTF-8", "Origin" : "https://us0.explore.garmin.com", "Referer":url, "X-Requested-With" : "XMLHttpRequest"})

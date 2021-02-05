@@ -27,10 +27,11 @@ def GetOneEmailBody():
     
     # The cached bodies
     bodies = []
+    From = ""
     
     ids = messages[0].split()
     if len(ids) == 0:
-        return ""
+        return "", ""
     id = ids[0]
     # fetch the email message by ID
     res, msg = imap.fetch(id, "(RFC822)")
@@ -45,6 +46,14 @@ def GetOneEmailBody():
                 subject = subject.decode(encoding)
             # decode email sender
             From, encoding = decode_header(msg.get("From"))[0]
+            From = email.utils.parseaddr(From)
+
+            # Force to select at least something? If a name is included the 2nd is the good one
+            if len(From) > 1:
+                From = From[1]
+            else:
+                From = From[0]
+
             if isinstance(From, bytes):
                 From = From.decode(encoding)
             print("Subject:", subject)
@@ -84,14 +93,14 @@ def GetOneEmailBody():
     for s in bodies:
         lowerCaseBodies.append(s.lower())
 
-    return lowerCaseBodies
+    return lowerCaseBodies, From
     
 def SendMail(body, to):
     smtp_ssl_port = 587 
     targets = [to]
 
     msg = MIMEText(body)
-    msg["Subject"] = "Test message processed!"
+    msg["Subject"] = "Avalanche Forecast"
     msg['From'] = username 
     msg['To'] = to
 

@@ -2,8 +2,11 @@ from mailmod import GetOneEmailBody
 from body_parser import FindMapShare, ParseAndTriage
 
 while True:
-    message = GetOneEmailBody()
+    message, From = GetOneEmailBody()
     if message == "":
         break
     for body in message:
-        ParseAndTriage(body)
+        try:
+            ParseAndTriage(body, From)
+        except ValueError:
+            print ("Caught exception "+ValueError)
