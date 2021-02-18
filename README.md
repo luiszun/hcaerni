@@ -16,3 +16,5 @@ pip install -r requirements.txt
 Change the hostname,username,password values in mailmod.py
 
 # Run:
+
+Activate your virtualenv, and then run `hcaerni/daemon.py`

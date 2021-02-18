@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from hcaerni.src.body_parser import ParseAndTriage
-from hcaerni.src.mailmod import GetOneEmailBody
+from src.body_parser import ParseAndTriage
+from src.mailmod import GetOneEmailBody
 
 while True:
     message, From = GetOneEmailBody()
@@ -11,4 +11,4 @@ while True:
         try:
             ParseAndTriage(body, From)
         except ValueError:
-            print ("Caught exception "+ValueError)
+            print("Caught exception " + ValueError)

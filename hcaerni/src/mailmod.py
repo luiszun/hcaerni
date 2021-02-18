@@ -9,8 +9,8 @@ hostname = "mail.luiszun.com"
 username = "nwac@anxiousmountaineer.com"
 password = "IAmNotThatDumbIThink"
 
-def GetOneEmailBody():
 
+def GetOneEmailBody():
     def clean(text):
         # clean text for creating a folder
         return "".join(c if c.isalnum() else "_" for c in text)
@@ -21,7 +21,7 @@ def GetOneEmailBody():
     imap.login(username, password)
 
     imap.select("INBOX")
-    status, messages = imap.search(None, '(UNSEEN)')
+    status, messages = imap.search(None, "(UNSEEN)")
 
     # The cached bodies
     bodies = []
@@ -68,7 +68,10 @@ def GetOneEmailBody():
                         body = part.get_payload(decode=True).decode()
                     except:
                         pass
-                    if content_type == "text/plain" and "attachment" not in content_disposition:
+                    if (
+                        content_type == "text/plain"
+                        and "attachment" not in content_disposition
+                    ):
                         # print text/plain emails and skip attachments
                         print(body)
                         bodies.append(body)
@@ -81,7 +84,7 @@ def GetOneEmailBody():
                     # print only text email parts
                     print(body)
                     bodies.append(body)
-            print("="*100)
+            print("=" * 100)
     # close the connection and logout
     imap.close()
     imap.logout()
@@ -93,14 +96,15 @@ def GetOneEmailBody():
 
     return lowerCaseBodies, From
 
+
 def SendMail(body, to):
     smtp_ssl_port = 587
     targets = [to]
 
     msg = MIMEText(body)
     msg["Subject"] = "Avalanche Forecast"
-    msg['From'] = username
-    msg['To'] = to
+    msg["From"] = username
+    msg["To"] = to
 
     server = smtplib.SMTP(hostname, smtp_ssl_port)
     server.ehlo()
