@@ -3,7 +3,7 @@ import re
 import requests
 import urllib
 
-from src.mailmod import SendMail
+from src.mailmod import EmailHandler
 
 # Got these value pairs from https://api.avalanche.org/v2/public/products/map-layer
 # Note to self, I know the order makes no sense, but who cares?
@@ -180,7 +180,7 @@ def GetForecastMessage(id):
     return text
 
 
-def ParseAndTriage(body, From):
+def ParseAndTriage(body: str, From: str, email_parser: EmailHandler) -> None:
     firstLine = body.partition("\n")[0]
     lineSplitR = firstLine.split(" ")
     lineSplit = []
@@ -201,12 +201,12 @@ def ParseAndTriage(body, From):
             )
             if len(lineSplit) > 2 and lineSplit[2].isnumeric():
                 message += "\n\n\n" + GetForecastMessage(lineSplit[2])
-            SendMail(message, lineSplit[1])
+            email_parser.SendMail(message, lineSplit[1])
 
     # If this is malformed, there's nothing to be done
     elif lineSplit[0].isnumeric() is True and lineSplit[0] in mapIdToCenter:
         msg = GetForecastMessage(lineSplit[0])
-        SendMail(msg, From)
+        email_parser.SendMail(msg, From)
         url = FindMapShare(body)
         if url == "":
             return
